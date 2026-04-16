@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package kernelsentinel.v1;
+
+service KernelSentinel {
+  rpc WatchDashboard(WatchRequest) returns (stream DashboardFrame);
+  rpc WatchPressure(WatchRequest) returns (stream PressureFrame);
+  rpc WatchAudit(WatchRequest) returns (stream SecurityAuditFrame);
+}
+
+message WatchRequest {
+  uint64 interval_ms = 1;
+}
+
+message Quantiles {
+  uint64 p50_ns = 1;
+  uint64 p99_ns = 2;
+  uint64 p999_ns = 3;
+}
+
+message ProcessMetric {
+  uint32 pid = 1;
+  uint64 vruntime_drift_ns = 2;
+  Quantiles wake_latency = 3;
+  double voluntary_switch_ratio = 4;
+  uint64 numa_imbalance_score = 5;
+  uint32 last_cpu = 6;
+}
+
+message NetworkMetric {
+  uint64 cgroup_id = 1;
+  uint64 bytes_used = 2;
+  uint64 bytes_budget = 3;
+  uint64 window_ns = 4;
+}
+
+message SecurityEvent {
+  uint64 ts_ns = 1;
+  uint32 uid = 2;
+  uint32 op = 3;
+  sint32 decision = 4;
+  uint64 arg0 = 5;
+  uint64 arg1 = 6;
+}
+
+message IoLatencyMetric {
+  uint32 opcode = 1;
+  Quantiles latency = 2;
+}
+
+message PressureFrame {
+  uint64 ts_ns = 1;
+  double signal = 2;
+  uint64 page_faults = 3;
+  uint64 alloc_failures = 4;
+  uint64 oom_kills = 5;
+  uint64 hugepage_failures = 6;
+  uint64 kswapd_wakeups = 7;
+}
+
+message DashboardFrame {
+  uint64 ts_ns = 1;
+  repeated ProcessMetric processes = 2;
+  repeated NetworkMetric network = 3;
+  repeated SecurityEvent recent_security = 4;
+  repeated IoLatencyMetric io = 5;
+  PressureFrame pressure = 6;
+}
+
+message SecurityAuditFrame {
+  repeated SecurityEvent events = 1;
+}
+

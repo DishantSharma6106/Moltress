@@ -1,0 +1,12 @@
+.DS_Store
+/target
+/bin
+/dist
+/cover.out
+/coverage
+/tmp
+/bpf/include/vmlinux.h
+/bpf/out
+/proto/gen
+/cli/internal/pb
+

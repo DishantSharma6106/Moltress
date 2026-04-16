@@ -1,0 +1,25 @@
+{
+  "file_rules": [
+    {
+      "uid": 1000,
+      "path": "/etc/shadow",
+      "allow": false,
+      "audit": true
+    }
+  ],
+  "cgroup_syscalls": [
+    {
+      "cgroup_id": 4026531835,
+      "syscalls": [0, 1, 60, 231]
+    }
+  ],
+  "socket_rules": [
+    {
+      "family": 2,
+      "proto": 6,
+      "address": "10.0.0.10",
+      "port": 443
+    }
+  ]
+}
+
