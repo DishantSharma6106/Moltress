@@ -580,7 +580,7 @@ int ks_tp_sched_switch(struct trace_event_raw_sched_switch *ctx)
 }
 
 SEC("tracepoint/kmem/mm_page_alloc")
-int ks_tp_mm_page_alloc(struct trace_event_raw_kmem_mm_page_alloc *ctx)
+int ks_tp_mm_page_alloc(struct trace_event_raw_mm_page_alloc *ctx)
 {
 	ks_emit_mem_event(KS_EVT_MEM_PAGE_ALLOC, 0, 0, ctx->order, ctx->gfp_flags);
 	return 0;
@@ -711,7 +711,7 @@ int ks_sockops(struct bpf_sock_ops *skops)
 	struct ks_socket_rule_key key = {
 		.daddr4 = skops->remote_ip4,
 		.dport = bpf_ntohl(skops->remote_port),
-		.proto = skops->protocol,
+		.proto = IPPROTO_TCP, /* bpf_sock_ops has no .protocol; sockops fires for TCP */
 		.family = skops->family,
 	};
 	__u32 allow = 1;
@@ -794,7 +794,7 @@ int BPF_PROG(ks_lsm_socket_connect, struct socket *sock, struct sockaddr *addres
 
 	key.family = AF_INET;
 	key.proto = IPPROTO_TCP;
-	key.daddr4 = BPF_CORE_READ(addr, sin_addr, s_addr);
+	key.daddr4 = BPF_CORE_READ(addr, sin_addr.s_addr);
 	key.dport = bpf_ntohs(BPF_CORE_READ(addr, sin_port));
 
 	if (bpf_map_lookup_elem(&socket_allowlist, &key))

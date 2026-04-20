@@ -33,6 +33,7 @@ The target toolchain for this repo is:
 - `llvm-strip`
 - `bpftool`
 - `pahole`
+- `libbpf-devel`
 - `cargo`
 - `go`
 - `protoc`
@@ -54,6 +55,12 @@ make vmtest
 2. build the CO-RE objects
 3. generate the libbpf skeletons
 4. generate Rust and Go gRPC bindings
+
+On Fedora, install the toolchain with:
+
+```bash
+sudo dnf install protobuf-compiler golang bpftool dwarves virtme-ng llvm clang17 libbpf-devel
+```
 
 ## Current status
 

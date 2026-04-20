@@ -8,6 +8,31 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 
+/* Preprocessor constants not emitted into vmlinux.h (they are #defines, not enums). */
+#ifndef ETH_P_IP
+#define ETH_P_IP 0x0800
+#endif
+
+#ifndef AF_INET
+#define AF_INET 2
+#endif
+
+#ifndef TC_ACT_OK
+#define TC_ACT_OK 0
+#endif
+
+#ifndef TC_ACT_SHOT
+#define TC_ACT_SHOT 2
+#endif
+
+#ifndef EPERM
+#define EPERM 1
+#endif
+
+#ifndef EACCES
+#define EACCES 13
+#endif
+
 #define KS_RINGBUF_SIZE (1U << 27)
 #define KS_HIST_BUCKETS 32
 #define KS_MAX_OPCODE 256
@@ -314,7 +339,7 @@ static __always_inline __u64 ks_current_vruntime(void)
 		return 0;
 	if (!bpf_core_field_exists(task->se.vruntime))
 		return 0;
-	return BPF_CORE_READ(task, se, vruntime);
+	return BPF_CORE_READ(task, se.vruntime);
 }
 
 #endif
